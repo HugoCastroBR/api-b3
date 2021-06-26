@@ -27,13 +27,23 @@ def route():
 
     print(">",request.args)
 
-    if request.args.get("ticker") in stocks:
+    searchedItem = request.args.get('ticker').upper()
+
+    if(searchedItem[-1] == 'F'):
+        searchedItem = list(searchedItem)
+
+        del(searchedItem[-1])
+        searchedItem = ''.join(str(e) for e in searchedItem)
+
+
+
+    if searchedItem in stocks:
         typeStock = "stock"
-    elif request.args.get("ticker") in fiis:
+    elif searchedItem in fiis:
         typeStock = "fii"
-    elif request.args.get("ticker") in etfs:
+    elif searchedItem in etfs:
         typeStock = "etfs"
-    elif request.args.get("ticker") in bdrs:
+    elif searchedItem in bdrs:
         typeStock = "bdrs"
     else :
         return {
@@ -45,22 +55,22 @@ def route():
     if typeStock == "fii":
         
         url = requests.get(
-            f"https://statusinvest.com.br/fundos-imobiliarios/{request.args.get('ticker')}")
+            f"https://statusinvest.com.br/fundos-imobiliarios/{searchedItem}")
         nav = BeautifulSoup(url.text, "html5lib")
         
-        infoAction = getAllValuesFiis(nav, request.args.get("ticker").upper())
+        infoAction = getAllValuesFiis(nav, searchedItem.upper())
         
         return jsonify(data=infoAction)
 
 #----------------------------- Stocks ------------------------
 
     elif typeStock == "stock":
-        
+
         url = requests.get(
-            f"https://statusinvest.com.br/acoes/{request.args.get('ticker')}")
+            f"https://statusinvest.com.br/acoes/{searchedItem}")
         nav = BeautifulSoup(url.text, "html5lib")
 
-        infoAction = getAllValuesStocks(nav, request.args.get("ticker").upper())
+        infoAction = getAllValuesStocks(nav, searchedItem.upper())
         
         return jsonify(data=infoAction)
 
@@ -69,10 +79,10 @@ def route():
     elif typeStock == "etfs":
         
         url = requests.get(
-            f"https://statusinvest.com.br/etfs/{request.args.get('ticker')}")
+            f"https://statusinvest.com.br/etfs/{searchedItem}")
         nav = BeautifulSoup(url.text, "html5lib")
 
-        infoAction = getAllValuesEtfs(nav, request.args.get("ticker").upper())
+        infoAction = getAllValuesEtfs(nav, searchedItem.upper())
 
         return jsonify(data=infoAction)
 
@@ -81,10 +91,10 @@ def route():
     elif typeStock == "bdrs":
 
         url = requests.get(
-            f"https://statusinvest.com.br/bdrs/{request.args.get('ticker').upper()}")
+            f"https://statusinvest.com.br/bdrs/{searchedItem.upper()}")
         nav = BeautifulSoup(url.text, "html5lib")
 
-        infoAction = getAllValuesBdrs(nav, request.args.get('ticker'))
+        infoAction = getAllValuesBdrs(nav, searchedItem)
 
         return jsonify(data=infoAction)
 
