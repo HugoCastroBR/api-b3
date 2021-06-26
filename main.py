@@ -55,7 +55,7 @@ def route():
 #----------------------------- Stocks ------------------------
 
     elif typeStock == "stock":
-       
+        
         url = requests.get(
             f"https://statusinvest.com.br/acoes/{request.args.get('ticker')}")
         nav = BeautifulSoup(url.text, "html5lib")
@@ -92,5 +92,4 @@ if __name__ == "__main__":
     PORT = os.environ.get('PORT')
     HOST = os.environ.get('HOST')
     DEBUG = os.environ.get('DEBUG')
-
     app.run(port=PORT, host=HOST, threaded=True,debug=DEBUG)
