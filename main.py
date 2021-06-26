@@ -4,14 +4,28 @@ from bs4 import BeautifulSoup
 import html5lib
 from get_data import getAllValuesFiis, getAllValuesStocks, getAllValuesEtfs, getAllValuesBdrs
 from lists import fiis, bdrs, stocks, etfs
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
+
 
 app = Flask(__name__)
 
 infoAction = {}
 typeStock = ""
 
+# Loading .env
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+# 
+
 @app.route("/", methods=["GET"])
 def route():
+
+
+    
+
+    print(">",request.args)
 
     if request.args.get("ticker") in stocks:
         typeStock = "stock"
@@ -26,11 +40,10 @@ def route():
             'error': "ticker value is null"
         }
 
-
 #----------------------------- FIIs ------------------------
 
     if typeStock == "fii":
-
+        
         url = requests.get(
             f"https://statusinvest.com.br/fundos-imobiliarios/{request.args.get('ticker')}")
         nav = BeautifulSoup(url.text, "html5lib")
@@ -76,4 +89,8 @@ def route():
         return jsonify(data=infoAction)
 
 if __name__ == "__main__":
-    app.run(port=3000, host="192.168.100.106", threaded=True)
+    PORT = os.environ.get('PORT')
+    HOST = os.environ.get('HOST')
+    DEBUG = os.environ.get('DEBUG')
+
+    app.run(port=PORT, host=HOST, threaded=True,debug=DEBUG)
